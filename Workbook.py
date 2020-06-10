@@ -5,3 +5,11 @@ class Workbook:
         self.file = file
         self.company = company
         self.working_directory = working_directory
+'''
+   # def get_workbook():
+        while True:
+            wb = input("What is the full filepath of the workbook?")
+
+            wb_list = []
+            wb_list.append(wb)
+'''
