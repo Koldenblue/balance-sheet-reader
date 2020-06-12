@@ -51,9 +51,6 @@ wb_list = [
     r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent'],
 
     [r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx',
-    r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent'],
-
-    [r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx',
     r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent']
 ]
 
@@ -95,11 +92,18 @@ for wbIndex in range(len(wb_list)):
 
     if recent_balance_check:
         for sheet in wb.sheetnames:
+            # ignore the security deposit sheets
+            ignore_list = ["Brighton Trading Tenants", "Chart1", "Palmaher Tenants"]
+            if sheet in ignore_list:
+                continue
             # wb[sheet] is the active sheet. most_recent_search(wb[sheet]) returns a cell coordinate.
             print("\n")
             print("active sheet = ", wb[sheet])
             print("Most recent payment = $", wb[sheet][most_recent_search(wb[sheet])].value)
             print("Balance after most recent payment = $", wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value)
-            if (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value < 0):
-                print(colored("BALANCE OWED", 'red'))
-
+            if (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1)).value != None and (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value < 0):
+                if wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Brighton Trading Tenants Individualized Balance Sheet Dr and Cr..xlsx' and wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx':
+                    print(colored("BALANCE OWED", 'red'))
+            if (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1)).value != None and (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value > 0):
+                if wb_list[wbIndex][0] == r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Brighton Trading Tenants Individualized Balance Sheet Dr and Cr..xlsx' or wb_list[wbIndex][0] == r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx':
+                    print(colored("BALANCE OWED", 'red'))

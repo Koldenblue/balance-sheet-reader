@@ -1,6 +1,6 @@
 import openpyxl, os
 import re
-from Workbook import Workbook
+from Workbook_class import Workbook
 
 wb = openpyxl.load_workbook(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets/1736 Westwood Tenant Balance Sheets.xlsx', data_only=True)
 os.chdir(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets')
@@ -63,15 +63,18 @@ def last_search(current_sheet, current_row):
     # Return none if nothing found (will be base case, where coord2 = None and val2 = None).
     return None, None
 
+print ("\n")
 for sheet in wb.sheetnames:
     current_sheet = wb[sheet]
     coord, val = last_search(current_sheet, 1)
     print("active sheet = ", current_sheet)
-    print("row = " + str(coord))
-    print(val)
-    
-    balance = current_sheet.cell(row=coord, column=6).value
-    print(balance)
+    if coord != None:
+        print("cell = A" + str(coord))
+        print("Date = ", val)
+        balance = current_sheet.cell(row=coord, column=6).value
+        print(balance)
+    else:
+        print(f"No entry for {month}")
 
 
     print ("\n")
