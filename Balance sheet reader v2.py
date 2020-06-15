@@ -83,27 +83,25 @@ while True:
         print("Invalid entry")
 
 
-if not recent_balance_check:
-    print("Search by month not yet implemented.")
-
-
 ''' Load each workbook. For each workbook, print out desired output.'''
-for wbIndex in range(len(wb_list)):
-    #Load each workbook one by one, and change the working directory as well.
-    wb = openpyxl.load_workbook(wb_list[wbIndex][0], data_only=True)
-    os.chdir(wb_list[wbIndex][1])
+new_workbook = False
+if recent_balance_check:
+    for wbIndex in range(len(wb_list)):
+        #Load each workbook one by one, and change the working directory as well.
+        wb = openpyxl.load_workbook(wb_list[wbIndex][0], data_only=True)
+        os.chdir(wb_list[wbIndex][1])
 
-    while not recent_balance_check:
-        month = input("What month is being checked for the balance? Enter the first three letters of any month.")
-        month = month[0:3].lower()
-        if month not in Month.month_list:
-            print("Invalid month")
-            continue
-        else:
-            month_checked = Month(month)
-        break
+        # Print out company name at the top of each new workbook.
+        if new_workbook == True:
+            print("<br>")
+            print("Company = " + wb_list[wbIndex][3])
+            print("~" * 80)
 
-    if recent_balance_check:
+        if new_workbook == False:
+            print("Company = " + wb_list[wbIndex][3])
+            print("~" * 80)
+            new_workbook = True
+
         for sheet in wb.sheetnames:
             # ignore the security deposit sheets
             ignore_list = ["Brighton Trading Tenants", "Chart1", "Palmaher Tenants"]
@@ -111,13 +109,37 @@ for wbIndex in range(len(wb_list)):
                 continue
             # wb[sheet] is the active sheet. most_recent_search(wb[sheet]) returns a cell coordinate.
             # Print the name of the tenant, which correspondes to the current sheetname.
-            print("\n")
+            print("")
             print("Tenant name = ", sheet)
+            print("Property = " + wb_list[wbIndex][2])
             print("Most recent payment = $", wb[sheet][most_recent_search(wb[sheet])].value)
-            print("Balance after most recent payment = $", wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value)
+
+            # For Brighton and Palmaher, the final balances are positive if a balance is owed. Convert these to print out as negative. 
+            if wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value == None:
+                print("Balance after most recent payment = $0")
+            elif wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Brighton Trading Tenants Individualized Balance Sheet Dr and Cr..xlsx' and wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx':
+                print("Balance after most recent payment = $", wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value)
+            else:
+                print("Balance after most recent payment = $", str(-1 * wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value))
+
+            # If not the Brighton and Palmaher sheets, print "balance owed" if the balance is negative, and the cell is not empty. If looking at those companies, print "balance owed" if balance is positive.
             if (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1)).value != None and (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value < 0):
                 if wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Brighton Trading Tenants Individualized Balance Sheet Dr and Cr..xlsx' and wb_list[wbIndex][0] != r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx':
                     print(colored("BALANCE OWED", 'red'))
             if (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1)).value != None and (wb[sheet].cell(row = wb[sheet][most_recent_search(wb[sheet])].row, column = wb[sheet][most_recent_search(wb[sheet])].column + 1).value > 0):
                 if wb_list[wbIndex][0] == r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Brighton Trading Tenants Individualized Balance Sheet Dr and Cr..xlsx' or wb_list[wbIndex][0] == r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Palmaher Tenants Individualized Balance Sheets Dr. and Cr..xlsx':
                     print(colored("BALANCE OWED", 'red'))
+
+
+if not recent_balance_check:
+    raise Exception("Search by month not yet implemented.")
+
+while not recent_balance_check:
+    month = input("What month is being checked for the balance? Enter the first three letters of any month.")
+    month = month[0:3].lower()
+    if month not in Month.month_list:
+        print("Invalid month")
+        continue
+    else:
+        month_checked = Month(month)
+    break
