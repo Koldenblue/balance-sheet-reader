@@ -9,6 +9,8 @@ init()
 
 '''INSTRUCTIONS'''
 '''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
+Word can also be used to color the "BALANCE OWED" entries with find and replace.
+
 Make sure the files being loaded are the most recent files!
 This program will break if the original formatting of the balance sheets is changed (ie column 5 no longer is the credit column, 
 or column 6 no longer is the balance column). This program also assumes that Brighton and Palmaher list positive balances as balances owed.
