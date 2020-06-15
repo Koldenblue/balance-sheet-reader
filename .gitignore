@@ -5,3 +5,4 @@ find index.py
 **/__pycache__
 **/balance-sheet-reader-output
 
+balance-sheet-reader output/balances 6-15-2020.docx
