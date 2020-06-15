@@ -1,0 +1,7 @@
+
+*.docx
+find directories.py
+find index.py
+*.xlsx
+**/__pycache__
+**/balance-sheet-reader-output
