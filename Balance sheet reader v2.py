@@ -7,6 +7,17 @@ from colorama import init, Fore, Back, Style
 from termcolor import colored
 init()
 
+'''INSTRUCTIONS'''
+'''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
+Make sure the files being loaded are the most recent files!
+This program will break if the original formatting of the balance sheets is changed (ie column 5 no longer is the credit column, 
+or column 6 no longer is the balance column). This program also assumes that Brighton and Palmaher list positive balances as balances owed.
+The other companies are assumed to list negative numbers as balances owed.'''
+
+'''TODO'''
+'''Update readme. Update issues. Implement file writing and saving. Possibly implement an easy way to select new balance sheets and add them to the array.
+Possibly implement balance search by month. Possibly implement writing to multiple file types (excel, text format, html).'''
+
 wb = openpyxl.load_workbook(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets/1736 Westwood Tenant Balance Sheets.xlsx', data_only=True)
 os.chdir(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets')
 # print(wb.sheetnames)
