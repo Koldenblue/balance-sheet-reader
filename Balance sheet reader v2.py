@@ -107,11 +107,13 @@ if recent_balance_check:
         # Print out company name at the top of each new workbook.
         if new_workbook == True:
             print("<br>")
-            print("Company = " + wb_list[wbIndex][3])
+            print("Company = " + wb_list[wbIndex][3] + ", ", end="")
+            print("Property = " + wb_list[wbIndex][2])
             print("~" * 80)
 
         if new_workbook == False:
-            print("Company = " + wb_list[wbIndex][3])
+            print("Company = " + wb_list[wbIndex][3] + ", ", end="")
+            print("Property = " + wb_list[wbIndex][2])
             print("~" * 80)
             new_workbook = True
 
@@ -124,7 +126,6 @@ if recent_balance_check:
             # Print the name of the tenant, which correspondes to the current sheetname.
             print("")
             print("Tenant name = ", sheet)
-            print("Property = " + wb_list[wbIndex][2])
             print("Most recent payment = $", wb[sheet][most_recent_search(wb[sheet])].value)
 
             # For Brighton and Palmaher, the final balances are positive if a balance is owed. Convert these to print out as negative. 
