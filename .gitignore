@@ -1,7 +1,7 @@
 
 find directories.py
 find index.py
-*.xlsx
+Balance sheet unused code.py
 **/__pycache__
 **/balance-sheet-reader-output
 
