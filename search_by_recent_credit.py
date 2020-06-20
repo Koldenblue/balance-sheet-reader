@@ -1,7 +1,7 @@
 import openpyxl
 import colorama
 from termcolor import colored
-from Workbook_class import wb_list
+from Updateable_values import wb_list, CREDIT_COLUMN, ignore_list
 import os
 
 def most_recent_search(current_sheet):
@@ -9,10 +9,21 @@ def most_recent_search(current_sheet):
 
     # Search starting at the max row. Increment by -1 rows. There is no row 0, so stop at row 1.
     for i in range(current_sheet.max_row, 1, -1):
-        cell = current_sheet.cell(row=i, column=5)
+        cell = current_sheet.cell(row=i, column=CREDIT_COLUMN)
         #  Return the first non-empty cell found.
         if cell.value != None:
             return cell.coordinate
+    return None
+
+def prev_payment_search(current_sheet, row):
+    '''Searches the credit column, similar to most_recent_search(),
+         but starts from the input row, increments by -1, and stops at row 1. '''
+    for i in range(row, 1, -1):
+        cell = current_sheet.cell(row=i, column=CREDIT_COLUMN)
+        #  Return the first non-empty cell found.
+        if cell.value != None:
+            return cell.coordinate, cell.row
+    return None, None
 
 
 def search_by_recent_credit():
@@ -38,7 +49,6 @@ def search_by_recent_credit():
 
         for sheet in wb.sheetnames:
             # ignore the security deposit sheets
-            ignore_list = ["Brighton Trading Tenants", "Chart1", "Palmaher Tenants"]
             if sheet in ignore_list:
                 continue
             # wb[sheet] is the active sheet. most_recent_search(wb[sheet]) returns a cell coordinate.
