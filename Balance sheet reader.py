@@ -5,6 +5,10 @@ from Workbook_class import Workbook
 wb = openpyxl.load_workbook(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets/1736 Westwood Tenant Balance Sheets.xlsx', data_only=True)
 os.chdir(r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent\Marlin Westwood Tenant Balance Sheets')
 print(wb.sheetnames)
+sheet = wb.active
+cell = sheet.cell(row=4, column=1)
+print(cell.value)
+
 
 while True:
     month = input("What month is being checked for the balance? Enter the first three letters of any month.")
