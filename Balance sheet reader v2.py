@@ -1,3 +1,5 @@
+#! python 3
+
 import openpyxl
 import os
 import re
@@ -9,12 +11,17 @@ from termcolor import colored
 init()
 import datetime
 
-# These constants are column numbers corresponding to date of payment, and balance.
-# These columns are chosen and formatted by the people making the excel charts. 
+'''INSTRUCTIONS'''
+'''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
+Word can also be used to color the "BALANCE OWED" entries with find and replace.
 
-def main():
-    pass
+Make sure the files being loaded are the most recent files!
 
+The program will search for months in 2020, according to the YEAR constant. Other contsants 
+designate which columns correspond to credit, date, and balance columns.
+'''
+
+'''Some sheets are manually ignored, since the balance sheet excel files have extra non-balance sheets.'''
 
 while True:
     '''Initial user input loop. Asks whether the user would like to check the most recent balance, or to check by month.'''
@@ -92,57 +99,51 @@ if not recent_balance_check:
         wb = openpyxl.load_workbook(wb_list[wbIndex][0], data_only=True)
         os.chdir(wb_list[wbIndex][1])
         print ("\n")
-        
-        # for each sheet in the workbook, search for the last entry corresponding to the input month.
-        # Start searching at row 1.
+
+        # for each sheet in the workbook, use last_search to find the last entry in the date column that 
+        # corresponds to the input month, or to any previous months. Start searching at row 1.
         for sheet in wb.sheetnames:
             if sheet in ignore_list:
                 continue
             current_sheet = wb[sheet]
             coord, val = last_search(current_sheet, 1, month_checked)
             print("active sheet = ", current_sheet)
+
             # If there is an entry, print out the cell location (A1, A2, etc.) then print out the date.
             # Print out the balance in the same row as the date.
             if coord != None:
                 readable_date = datetime.datetime.strftime(val, '%B %d, %Y')
-                print("cell = A" + str(coord))
-                print("Date = ", readable_date)
+                # print("cell = A" + str(coord))
                 payment = current_sheet.cell(row=coord, column=CREDIT_COLUMN).value
                 balance = current_sheet.cell(row=coord, column=BALANCE_COLUMN).value
+
+                print(f"Final balance entry, dated {readable_date}:", balance)
+                
+                # The balance column should never be empty, so it should never == None.
+                # The payment column is only filled if a payment has been made.
                 if payment != None:
                     print("Payment of ${1} received on {0}".format(readable_date, payment))
                 else:
-                    print(f"No payment listed on {readable_date}.")
+                    print(f"No payment listed for final balance entry on {readable_date}.")
                     prev_payment_coord, prev_payment_row = prev_payment_search(current_sheet, coord)
-                    prev_payment_date = current_sheet.cell(row=prev_payment_row, column=DATE_COLUMN).value
                     if prev_payment_coord != None:
-                        last_payment_date = datetime.datetime.strftime(prev_payment_date, '%B %d, %Y')
-                        print(f"Last payment recieved was ${current_sheet[str(prev_payment_coord)].value} on {last_payment_date}.")
+                        prev_payment_date = current_sheet.cell(row=prev_payment_row, column=DATE_COLUMN).value
+                        if prev_payment_date != None:
+                            readable_prev_payment_date = datetime.datetime.strftime(prev_payment_date, '%B %d, %Y')
+                            print(f"Previous payment entry listed as ${current_sheet[str(prev_payment_coord)].value} received on {readable_prev_payment_date}.")
+                        else:
+                            print("No previous payment found.")
                     else:
                         print("No previous payment found.")
-                print(f"Balance for {month_checked.full_name}:", balance)
             else:
-                print(f"No entry for {month}")
+                print(f"No entry for {month} or for previous months.")
 
             print("")
 
-# Print number of tenants checked
-#return error if no matches in a sheet
-
-'''INSTRUCTIONS'''
-'''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
-Word can also be used to color the "BALANCE OWED" entries with find and replace.
-
-Make sure the files being loaded are the most recent files!
-This program will break if the original formatting of the balance sheets is changed (ie column 5 no longer is the credit column, 
-or column 6 no longer is the balance column). This program also assumes that Brighton and Palmaher list positive balances as balances owed.
-The other companies are assumed to list negative numbers as balances owed.'''
-
-'''The month regex under Month_class also assumes the year is 2020.'''
-
-'''Some sheets are manually ignored, since the balance sheet excel files have extra non-balance sheets.'''
-
 '''TODO'''
-'''Update readme. Update issues. Implement file writing and saving. Possibly implement an easy way to select new balance sheets and add them to the array.
-Possibly implement balance search by month. Possibly implement writing to multiple file types (excel, text format, html).'''
-# Add files to manual ignore list.
+'''Update readme. Update issues list. Implement file writing and saving. Possibly implement an easy way to select new balance sheets and add them to the array.
+Update search by recent credit to be clear about the date corresponding to the credit.
+Possibly implement writing to multiple file types (excel, text format, html).
+Print number of tenants checked.'''
+
+

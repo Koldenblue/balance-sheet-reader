@@ -58,6 +58,8 @@ wb_list = [
     r'\\Optiplex7440\c\Rents\Rent 2020\Tenant Rent', "3263 Motor", "Palmaher"]
 ]
 
+
+# To use sample worksheet: switch the variable names of wb_list and sample. Update the file location of the sample sheet.
 sample = [
     [r'<FILEPATH>\Sample Balance Sheet.xlsx', r'<WORKING DIRECTORY - SAMPLE FILE LOCATION>', 'SAMPLE ADDRESS',
     'SAMPLE COMPANY']
