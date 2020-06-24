@@ -1,5 +1,4 @@
 #! python 3
-
 import openpyxl
 import os
 import re
@@ -11,20 +10,21 @@ from termcolor import colored
 init()
 import datetime
 
+
 '''INSTRUCTIONS'''
 '''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
 Word can also be used to color the "BALANCE OWED" entries with find and replace.
 
 Make sure the files being loaded are the most recent files!
 
-The program will search for months in 2020, according to the YEAR constant. Other contsants 
+The program will search for months in 2020, according to the YEAR constant. Other constants 
 designate which columns correspond to credit, date, and balance columns.
-'''
 
-'''Some sheets are manually ignored, since the balance sheet excel files have extra non-balance sheets.'''
+Some sheets are manually ignored, since the balance sheet excel files have extra non-balance sheets.'''
 
+
+# Initial user input loop. Asks whether the user would like to check the most recent balance, or to check by month.
 while True:
-    '''Initial user input loop. Asks whether the user would like to check the most recent balance, or to check by month.'''
     print ("~" * 30)
     recent = input("Check most recent balance y/n?")
     print ("~" * 30)
@@ -82,6 +82,8 @@ def last_search(current_sheet, current_row, month):
     # Return none if nothing found (will be base case, where coord2 = None and val2 = None).
     return None, None
 
+
+# Get user input if checking by month.
 while not recent_balance_check:
     month = input("What month is being checked for the balance? Enter the first three letters of any month.")
     try:
@@ -93,6 +95,8 @@ while not recent_balance_check:
         continue
 
 
+# If getting balance by input month, print out the latest balance and relevant info,
+# corresponding to the last entry for that month or a previous month.
 if not recent_balance_check:
     for wbIndex in range(len(wb_list)):
         #Load each workbook one by one, and change the working directory as well.
