@@ -98,6 +98,11 @@ while not recent_balance_check:
 # If getting balance by input month, print out the latest balance and relevant info,
 # corresponding to the last entry for that month or a previous month.
 if not recent_balance_check:
+    # Create a new workbook for writing.
+   os.chdir()
+    writebook = openpyxl.Workbook()
+    writesheet = writebook.active
+
     for wbIndex in range(len(wb_list)):
         #Load each workbook one by one, and change the working directory as well.
         wb = openpyxl.load_workbook(wb_list[wbIndex][0], data_only=True)
