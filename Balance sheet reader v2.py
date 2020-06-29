@@ -4,7 +4,7 @@ import openpyxl
 import os
 import re
 from search_by_recent_credit import search_by_recent_credit, prev_payment_search
-from Updateable_values import wb_list, ignore_list, DATE_COLUMN, BALANCE_COLUMN, CREDIT_COLUMN, write_dir
+from Updateable_values import wb_list, ignore_list, DATE_COLUMN, BALANCE_COLUMN, CREDIT_COLUMN, write_dir, DESCRIPTION_COLUMN
 from Month_class import Month
 from colorama import init, Fore, Back, Style
 from termcolor import colored
@@ -27,7 +27,7 @@ Some sheets are manually ignored, since the balance sheet excel files have extra
 # Initial user input loop. Asks whether the user would like to check the most recent balance, or to check by month.
 while True:
     print ("~" * 30)
-    recent = input("Check most recent balance y/n?")
+    recent = input("Check most recent credit payment y/n? 'Yes' does not provide the current balance. Entering 'no' will allow checking by month, which will provide the balance up to the entered month.")
     print ("~" * 30)
     if recent.lower() == 'y' or recent.lower() == 'yes':
         recent_balance_check = True
@@ -107,20 +107,22 @@ if not recent_balance_check:
     write_column = 'A'
 
     # Also create a new sheet to store date in table format.
-    table_sheet = writtenbook.create_sheet()
+    table_sheet = writtenbook.create_sheet("Payment Table")
     column_width = 50
     table_sheet["A1"] = "TENANT SHEET"
     table_sheet.column_dimensions['A'].width = column_width
-    table_sheet["B1"] = "BALANCE"
+    table_sheet["B1"] = "FINAL BALANCE ENTRY DATED:"
     table_sheet.column_dimensions['B'].width = column_width
     table_sheet["C1"] = "PAYMENT DATE"
     table_sheet.column_dimensions['C'].width = column_width
     table_sheet["D1"] = "PREV PAYMENT, IF NO PAYMENT FOUND"
     table_sheet.column_dimensions['D'].width = column_width
+    table_sheet["E1"] = "WRITTEN PAYMENT DESCRIPTION"
+    table_sheet.column_dimensions['E'].width = column_width
     # row and column to be written to:
     table_row = 2
     table_column = 1
-    table_letters = "ABCD"
+    table_letters = "0ABCDE"
 
     for wbIndex in range(len(wb_list)):
         #Load each workbook one by one, and change the working directory as well.
@@ -154,18 +156,27 @@ if not recent_balance_check:
                 balance = current_sheet.cell(row=coord, column=BALANCE_COLUMN).value
                 print(f"Final balance entry, dated {readable_date}: $" + str(balance))
                 string2 = f"Final balance entry, dated {readable_date}: $" + str(balance)
+                string2_abbr = f"{readable_date}: $" + str(balance)
 
                 # The balance column should never be empty, so it should never == None.
                 # On the other hand, the payment column is only filled if a payment has been made.
                 if payment != None:
                     print("Payment of ${1} received on {0}".format(readable_date, payment))
                     string3 = "Payment of ${1} received on {0}".format(readable_date, payment)
+                    try:
+                        description = str(current_sheet.cell(row=coord, column=DESCRIPTION_COLUMN).value) + ", " + str(current_sheet.cell(row=coord - 1, column=DESCRIPTION_COLUMN).value)
+                    except TypeError:
+                        description = None
                 else:
                     print(f"No payment listed for final balance entry on {readable_date}.")
                     string3 = f"No payment listed for final balance entry on {readable_date}."
                     prev_payment_coord, prev_payment_row = prev_payment_search(current_sheet, coord)
                     if prev_payment_coord != None:
                         prev_payment_date = current_sheet.cell(row=prev_payment_row, column=DATE_COLUMN).value
+                        try:
+                            description = str(current_sheet.cell(row=prev_payment_row, column=DESCRIPTION_COLUMN).value) + ", " + str(current_sheet.cell(row=prev_payment_row - 1, column=DESCRIPTION_COLUMN).value)
+                        except TypeError:
+                            description = None
                         if prev_payment_date != None:
                             try:
                                 readable_prev_payment_date = datetime.datetime.strftime(prev_payment_date, '%B %d, %Y')
@@ -187,6 +198,7 @@ if not recent_balance_check:
             else:
                 print(f"No entry for {month} or for previous months.")
                 string2 = f"No entry for {month} or for previous months."
+                string2_abbr = f"No entry for {month} or for previous months."
 
             print("")
 
@@ -207,22 +219,30 @@ if not recent_balance_check:
 
             # Write data to table in table_sheet.
             table_column = 1
-            table_sheet[table_letters[table_column] + str(table_row)] = string1
+            table_sheet[table_letters[table_column] + str(table_row)] = str(current_sheet)
             table_column = 2
-            table_sheet[table_letters[table_column] + str(table_row)] = string2
+            table_sheet[table_letters[table_column] + str(table_row)] = string2_abbr
             if string3_exists:
                 table_column = 3
                 table_sheet[table_letters[table_column] + str(table_row)] = string3
             if string4_exists:
                 table_column = 4
+                if "Previous payment entry listed as" in string4:
+                    string4 = string4.split()
+                    string4 = string4[5:]
+                    string4 = " ".join(string4)
                 table_sheet[table_letters[table_column] + str(table_row)] = string4
+            table_column = 5
+            if description != None:
+                table_sheet[table_letters[table_column] + str(table_row)] = description
             table_row += 1
 
-# Save the new excel file.
-present = datetime.datetime.now()
-present = datetime.datetime.strftime(present, "%B-%d-%Y")
-writtenbook.save("BALANCE DATA {0}.xlsx".format(present))
-
+if not recent_balance_check:
+    # Save the new excel file.
+    present = datetime.datetime.now()
+    present = datetime.datetime.strftime(present, "%B-%d-%Y")
+    writtenbook.save("BALANCE DATA {0}.xlsx".format(present))
+    print(f"\nExcel file '{present}.xlsx' written to {Path.cwd()}")
 '''TODO'''
 '''Update readme. Update issues list. Implement file writing and saving. Possibly implement an easy way to select new balance sheets and add them to the array.
 Update search by recent credit to be clear about the date corresponding to the credit.

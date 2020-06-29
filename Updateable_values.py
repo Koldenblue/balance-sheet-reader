@@ -7,6 +7,7 @@ YEAR = 2020
 DATE_COLUMN = 1
 CREDIT_COLUMN = 5
 BALANCE_COLUMN = 6
+DESCRIPTION_COLUMN = 2
 
 # ignore_list is a list of Excel chart names to be ignored by this program
 # Ignored because the named charts are not balance sheets.
