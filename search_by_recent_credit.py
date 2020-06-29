@@ -1,9 +1,10 @@
 import openpyxl
 import colorama
 from termcolor import colored
-from Updateable_values import wb_list, CREDIT_COLUMN, ignore_list, DATE_COLUMN, BALANCE_COLUMN
+from Updateable_values import wb_list, CREDIT_COLUMN, ignore_list, DATE_COLUMN, BALANCE_COLUMN, DESCRIPTION_COLUMN, write_dir
 import os
 import datetime
+from pathlib import Path
 
 def most_recent_search(current_sheet):
     ''' A function that returns the coordinate of the most recent entry in the credit column, 'E', (column 5).'''
@@ -33,6 +34,23 @@ def search_by_recent_credit():
     ''' Load each workbook. For each workbook, print out information
     pertaining to the most recent entry in the credit column (column 'E', or 5).'''
     new_workbook = False
+    write_dir()
+    writtenbook = openpyxl.Workbook()
+    recent_credit_sheet = writtenbook.active
+    column_width = 50
+    recent_credit_sheet["A1"] = "TENANT SHEET"
+    recent_credit_sheet.column_dimensions['A'].width = column_width
+    recent_credit_sheet["B1"] = "MOST RECENT PAYMENT DATE"
+    recent_credit_sheet.column_dimensions['B'].width = column_width
+    recent_credit_sheet["C1"] = "PAYMENT AMOUNT"
+    recent_credit_sheet.column_dimensions['C'].width = column_width
+    recent_credit_sheet["D1"] = "WRITTEN PAYMENT DESCRIPTION"
+    recent_credit_sheet.column_dimensions['D'].width = column_width
+    # row and column to be written to:
+    table_row = 2
+    table_column = 1
+    table_letters = "0ABCD"
+
     for wbIndex in range(len(wb_list)):
         #Load each workbook one by one, and change the working directory as well.
         wb = openpyxl.load_workbook(wb_list[wbIndex][0], data_only=True)
@@ -68,13 +86,28 @@ def search_by_recent_credit():
                 print("Most recent payment = $", credit_cell.value, "listed on", credit_date + ".")
             except TypeError:
                 print("Most recent payment = $", credit_cell.value, "No date Listed.")
-            # If value of cell is None, balance owed is $0. Else print out balance = cell value.
-            if wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1).value == None:
-                print("Balance after most recent payment = $0")
-            else:
-               print("Balance after most recent payment = $", wb[sheet].cell(row = credit_cell.row, column = BALANCE_COLUMN).value)
+            try:
+                description = str(wb[sheet].cell(row = credit_cell.row, column = DESCRIPTION_COLUMN).value) + ", " + str(wb[sheet].cell(row = credit_cell.row - 1, column = DESCRIPTION_COLUMN).value)
+            except TypeError:
+                description = None
 
-            # Print "balance owed" if the balance is negative, and the cell is not empty. 
-            if (wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1)).value != None:
-                if (wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1).value < 0):
-                    print(colored("BALANCE OWED", 'red'))
+            write_dir()
+            table_column = 1
+            recent_credit_sheet[table_letters[table_column] + str(table_row)] = str(wb[sheet])
+            table_column = 2
+            try:
+                recent_credit_sheet[table_letters[table_column] + str(table_row)] = credit_date
+            except ValueError:
+                pass
+            table_column = 3
+            recent_credit_sheet[table_letters[table_column] + str(table_row)] = credit_cell.value
+            table_column = 4
+            if description != None:
+                recent_credit_sheet[table_letters[table_column] + str(table_row)] = description
+            table_row += 1
+
+    write_dir()
+    present = datetime.datetime.now()
+    present = datetime.datetime.strftime(present, "%B-%d-%Y")
+    writtenbook.save("MOST RECENT PAYMENTS {0}.xlsx".format(present))
+    print(f"\nExcel file '{present}.xlsx' written to {Path.cwd()}")

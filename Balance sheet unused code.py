@@ -64,3 +64,18 @@ def last_search(current_sheet, current_row, month):
         # month1 = Month('April')
         # month2 = Month('mar')
         # print(month1.month_lesser(month2))
+
+
+''' 
+Under search_by_recent_credit():
+            # If value of cell is None, balance owed is $0. Else print out balance = cell value.
+            if wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1).value == None:
+                print("Balance after most recent payment = $0")
+            else:
+               print("Balance after most recent payment = $", wb[sheet].cell(row = credit_cell.row, column = BALANCE_COLUMN).value)
+
+            # Print "balance owed" if the balance is negative, and the cell is not empty. 
+            if (wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1)).value != None:
+                if (wb[sheet].cell(row = credit_cell.row, column = credit_cell.column + 1).value < 0):
+                    print(colored("BALANCE OWED", 'red'))
+'''
