@@ -1,4 +1,5 @@
 '''THIS FILE CONTAINS ALL UPDATEABLE YEARLY VALUES, CONSTANTS, AND FILE LOCATIONS'''
+import os
 
 # Year is the current year.
 # Columns numbers are assigned according to the formatting of the balance sheets.
@@ -10,6 +11,11 @@ BALANCE_COLUMN = 6
 # ignore_list is a list of Excel chart names to be ignored by this program
 # Ignored because the named charts are not balance sheets.
 ignore_list = ["Brighton Trading Tenants", "Chart1", "Palmaher Tenants"]
+
+def write_dir():
+    '''Directory where written file is stored.'''
+    os.chdir(r'C:\Users\TW\Desktop\Kevin\Python programs\balance-sheet-reader\balance-sheet-reader output')
+
 
 # wb_list is a 2d Array where:
 # wb_list[i][0] == filename
