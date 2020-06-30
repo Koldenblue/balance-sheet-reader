@@ -27,7 +27,7 @@ Some sheets are manually ignored, since the balance sheet excel files have extra
 # Initial user input loop. Asks whether the user would like to check the most recent balance, or to check by month.
 while True:
     print ("~" * 30)
-    recent = input("Check most recent credit payment y/n? 'Yes' does not provide the current balance. Entering 'no' will allow checking by month, which will provide the balance up to the entered month.")
+    recent = input("Check most recent credit payment y/n? \n'Yes' does not provide the current balance. Entering 'no' will allow checking by month, which will provide the balance up to the entered month.\n")
     print ("~" * 30)
     if recent.lower() == 'y' or recent.lower() == 'yes':
         recent_balance_check = True
