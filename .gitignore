@@ -3,6 +3,6 @@ find directories.py
 find index.py
 Balance sheet unused code.py
 **/__pycache__
-**/balance-sheet-reader-output
+**/balance-sheet-reader-output/**
 
 balance-sheet-reader output/balances 6-15-2020.docx
