@@ -1,4 +1,4 @@
-#! python 3
+#!/usr/bin/env python3
 from pathlib import Path    # in order to check Path.cwd()
 import openpyxl
 import os
@@ -10,11 +10,10 @@ from colorama import init, Fore, Back, Style
 from termcolor import colored
 init()
 import datetime
-
+import sys
 
 '''INSTRUCTIONS'''
-'''See readme. In word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
-Word can also be used to color the "BALANCE OWED" entries with find and replace.
+'''See readme. If copying and pasting output to word, '<br>' can be replaced with the find and replace command, with "^m". This will cause page breaks to appear.
 
 Make sure the files being loaded are the most recent files!
 
@@ -250,3 +249,7 @@ Possibly implement writing to multiple file types (excel, text format, html).
 Print number of tenants checked.'''
 
 
+while True:
+    ex =input("type any key to exit")
+    if ex != '':
+        sys.exit()
