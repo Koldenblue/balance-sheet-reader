@@ -15,7 +15,7 @@ ignore_list = ["Brighton Trading Tenants", "Chart1", "Palmaher Tenants"]
 
 def write_dir():
     '''Directory where written file is stored.'''
-    os.chdir(r'C:\Users\TW\Desktop\Kevin\Python programs\balance-sheet-reader\balance-sheet-reader output')
+    os.chdir(r'C:\Users\TW\Desktop\Kevin\Python programs\balance-sheet-reader\balance-sheet-reader-output')
 
 
 # wb_list is a 2d Array where:

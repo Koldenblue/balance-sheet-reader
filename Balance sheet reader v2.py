@@ -218,7 +218,7 @@ if not recent_balance_check:
 
             # Write data to table in table_sheet.
             table_column = 1
-            table_sheet[table_letters[table_column] + str(table_row)] = str(current_sheet)
+            table_sheet[table_letters[table_column] + str(table_row)] = str(current_sheet)[11:]
             table_column = 2
             table_sheet[table_letters[table_column] + str(table_row)] = string2_abbr
             if string3_exists:
@@ -243,10 +243,9 @@ if not recent_balance_check:
     writtenbook.save("BALANCE DATA {0}.xlsx".format(present))
     print(f"\nExcel file '{present}.xlsx' written to {Path.cwd()}")
 '''TODO'''
-'''Update readme. Update issues list. Implement file writing and saving. Possibly implement an easy way to select new balance sheets and add them to the array.
-Update search by recent credit to be clear about the date corresponding to the credit.
+'''
 Possibly implement writing to multiple file types (excel, text format, html).
-Print number of tenants checked.'''
+Possibly print number of tenants checked.'''
 
 
 while True:
